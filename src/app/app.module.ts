@@ -1,16 +1,26 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
+import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
+import { StartComponent } from './start/start.component';
+import { AddEditRouteComponent } from './add-edit-route/add-edit-route.component';
+import { AppRoutingModule } from './/app-routing.module';
+import { Routes, RouterModule } from '@angular/router';
+
+
 
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    AddEditRouteComponent,
+    StartComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
