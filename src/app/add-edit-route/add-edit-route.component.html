@@ -1,9 +1,23 @@
 <div class="center">
-  <form #f="ngForm"  (ngSubmit)="onSubmit(f)">
+  <form class="edit-route-form" [formGroup]="routeForm">
     <fieldset>
       <label>Average fuel consumption</label>
-      <input type="number" ngModel name="averageConsumption" placeholder="7.5" step="0.1" min="0" max="20"/>
+      <input type="number" formControlName="averageConsumption" placeholder="7.5" step="0.1" min="1" max="20"/>
     </fieldset>
+    <h3>Route</h3>
+    <div formArrayName="waypoints">
+      <ng-container *ngFor="let waypoint of routeForm.get('waypoints').controls; let i = index">
+        <fieldset [formGroupName]="i">
+          <button class="square" [attr.disabled]="canRemoveWaypoint(i) ? null : ''" (click)="removeWaypoint(i)" type="buttom" tabindex="-1">-</button>
+          <button class="square" (click)="addWaypoint(i)" type="buttom" tabindex="-1">+</button>
+          <input type="text" formControlName="name" placeholder="{{getNamePlaceholder(i)}}"/>
+          <span>at</span>
+          <input type="number" formControlName="distance"/>
+          <span>km</span>
+        </fieldset>
+        </ng-container>
+    </div>
     <button type="submit">Submit</button>
-  </form>
+  </form>  
 </div>
+{{routeForm.value | json}}
