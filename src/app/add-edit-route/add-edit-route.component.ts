@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, ValidatorFn } from '@angular/forms';
 
 class Waypoint {
   name = '';
@@ -26,7 +26,7 @@ export class AddEditRouteComponent implements OnInit {
   createForm(): any {
     this.routeForm = this.fb.group({
       averageConsumption: 12,
-      waypoints: this.fb.array([new Waypoint(), new Waypoint()].map(c => this.fb.group(c)))
+      waypoints: this.fb.array([new Waypoint(), new Waypoint(), new Waypoint()].map(c => this.fb.group(c)), ascendingDistanceValidator())
     });
     (<FormArray> this.routeForm.get('waypoints')).controls[0].get('distance').disable();
   }
@@ -57,4 +57,27 @@ export class AddEditRouteComponent implements OnInit {
     if (waypoints.length === 2) return false;
     return true;
   }
+}
+
+
+function ascendingDistanceValidator(): ValidatorFn {
+  return (waypoints: FormArray): {[key: string]: any} => {
+    let errors = [];
+    console.log(waypoints.controls.map(w => w.get('distance').value));
+    waypoints.controls.forEach((controlGroup, index) => {
+      if (index === 0) return;
+      let currentDistance = controlGroup.get('distance').value;
+      let previousDistance = waypoints.controls[index -1].get('distance').value;
+      // console.log(`current: ${currentDistance}, previous: ${previousDistance}`)
+      if (currentDistance <= previousDistance) {
+        let name = controlGroup.get('name').value;
+        if (name !== '') {
+          errors.push(name);
+        } else {
+          errors.push(`${index + 1} waypoint`);
+        }
+      }
+    });
+    return errors.length > 0 ? {'invalidDistance': errors.join(', ')} : null;
+  };
 }
